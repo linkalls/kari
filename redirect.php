@@ -1,8 +1,8 @@
 <?php
 require 'db.php';
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+# ini_set('display_errors', 1);
+# error_reporting(E_ALL);
 
 if (!isset($_GET['url'])) {
   echo "URL parameter is missing.";

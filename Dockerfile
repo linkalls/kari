@@ -7,8 +7,14 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 # アプリケーションのコードをコンテナにコピー
 COPY . /var/www/html
 
+# カスタムのApache設定ファイルをコピー
+COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+
 # デフォルトのWebサーバーのドキュメントルートを設定
 WORKDIR /var/www/html
 
 # 必要なポートを開放
 EXPOSE 80
+
+# Apacheを再起動して新しい設定を適用
+RUN service apache2 restart

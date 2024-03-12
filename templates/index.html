@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>URL短縮サービス</title>
+ <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+ <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+ <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: linear-gradient(90deg, rgba(36,36,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+        color: white;
+      }
+      .container {
+        background-color: #2d3748;
+      }
+    }
+ </style>
+</head>
+<body class="flex items-center justify-center min-h-screen text-white">
+ <div class="container bg-white p-6 rounded shadow-md text-black">
+    <h1 class="text-3xl mb-4">URL短縮サービス</h1>
+    <form id="url-form" class="flex flex-col">
+      <input type="url" id="url-input" class="flex-grow mr-2 p-2 rounded border mb-2" required placeholder="ここにURLを入力してください" aria-label="URLを入力してください">
+      <input type="text" id="custom-path-input" class="flex-grow mr-2 p-2 rounded border mb-2" placeholder="ここにカスタムパスを入力してください（任意）" aria-label="カスタムパスを入力してください">
+      <button type="submit" class="p-2 rounded bg-blue-500 text-white" aria-label="短縮">短縮</button>
+    </form>
+    <p id="copyMessage" class="mt-4"></p>
+ </div>
+ <script src="urls.js"></script>
+</body>
+</html>

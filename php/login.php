@@ -3,32 +3,30 @@ include 'db.php';
 session_start(); // セッションを開始
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+  $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+  $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
-    $sql = "SELECT * FROM users WHERE username = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+  $sql = "SELECT * FROM users WHERE username = ?";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("s", $username);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            session_start();
-            $_SESSION["username"] = $username;
-            // ユーザーをダッシュボードにリダイレクト
-            header("Location: /dashboard.php");
-            exit;
-        } else {
-            $error = "ユーザー名またはパスワードが無効です";
-        }
+  if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    if (password_verify($password, $user['password'])) {
+      $_SESSION["user_id"] = $user['user_id']; // ユーザーIDをセッションに保存
+      // ユーザーをダッシュボードにリダイレクト
+      header("Location: /dashboard.php");
+      exit;
     } else {
-        $error = "ユーザー名またはパスワードが無効です";
+      $error = "ユーザー名またはパスワードが無効です";
     }
+  } else {
+    $error = "ユーザー名またはパスワードが無効です";
+  }
 }
 ?>
-
 
 
 <!DOCTYPE html>
@@ -41,10 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="font-sans bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 min-h-screen flex items-center justify-center text-white">
-  <div class="bg-white p-6 rounded shadow-md text-black w-full max-w-md">
+  <div class="bg-white p-8 rounded shadow-md text-black w-full max-w-md mx-4">
     <h1 class="text-3xl mb-4">ログイン</h1>
     <?php if (isset($_SESSION['message'])): ?>
-      <p class="text-green-500"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
+      <div class="bg-green-500 text-white px-4 py-2 rounded">
+        <?php 
+        echo $_SESSION['message']; 
+        unset($_SESSION['message']);
+        ?>
+      </div>
     <?php endif; ?>
     <form action="login.php" method="post" class="space-y-6">
       <div>

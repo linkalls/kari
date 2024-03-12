@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION["username"])) {
+if (!isset($_SESSION["user_id"])) {
   header("Location: login.php");
   exit;
 }
@@ -21,9 +21,16 @@ if (!isset($_SESSION["username"])) {
     <div class="w-96 bg-white rounded-lg shadow-lg p-6 mb-8">
       <canvas id="urlAnalysisChart"></canvas>
     </div>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+    <script>
+      function redirectToIndex() {
+        window.location.href = 'index.php';
+      }
+    </script>
+    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="redirectToIndex()">
       短縮URLを作成する
     </button>
+  
   </div>
 
   <script>

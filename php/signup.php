@@ -17,10 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $error = "そのユーザー名は既に使われています";
   } else {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $user_id = bin2hex(random_bytes(16)); // ユーザーIDをランダムに生成
 
-    $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+    $sql = "INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $username, $hashed_password);
+    $stmt->bind_param("sss", $user_id, $username, $hashed_password);
 
     // トランザクション開始
     $conn->begin_transaction();

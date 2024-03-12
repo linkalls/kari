@@ -1,6 +1,8 @@
 <?php
 session_start();
 session_destroy();
-header("Location: login.php");
+session_start();
+$_SESSION["message"] = "ログアウトが完了しました。";
+header("Location: index.php");
 exit;
 ?>

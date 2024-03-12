@@ -7,6 +7,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $originalUrl = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL);
   $customPath = filter_input(INPUT_POST, 'customPath', FILTER_SANITIZE_STRING);
 
+  // スキームがない場合は補完する
+  if (!preg_match('#^https?://#', $originalUrl)) {
+    $originalUrl = 'http://' . $originalUrl;
+}
+
   $shortUrl = substr(hash('sha256', $originalUrl), 0, 8);
   
   // Check if user_id is set in the session

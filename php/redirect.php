@@ -24,12 +24,12 @@ if ($row) {
   header("Location: $original_url");
 
   // Save access log
-  $referrer = $_SERVER['HTTP_REFERER'] ?? '';
-  $stmt = $conn->prepare("INSERT INTO url_accesses (short_url_id, accessed_at, referrer) VALUES (?, NOW(), ?)");
-  $stmt->bind_param('is', $short_url_id, $referrer);
+  $referrer = $short_url;
+  $client_ip = $_SERVER['REMOTE_ADDR'];
+  $stmt = $conn->prepare("INSERT INTO url_accesses (short_url_id, accessed_at, referrer, client_ip) VALUES (?, NOW(), ?, ?)");
+  $stmt->bind_param('iss', $short_url_id, $referrer, $client_ip);
   $stmt->execute();
 } else {
   echo "URL not found.";
 }
-
 

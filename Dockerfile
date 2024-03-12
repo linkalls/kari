@@ -4,6 +4,9 @@ FROM php:7.4-apache
 # 必要なPHP拡張をインストール
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
+# mod_rewriteを有効にする
+RUN a2enmod rewrite
+
 # アプリケーションのコードをコンテナにコピー
 COPY . /var/www/html
 
@@ -16,5 +19,5 @@ WORKDIR /var/www/html
 # 必要なポートを開放
 EXPOSE 80
 
-# Apacheを再起動して新しい設定を適用
-RUN service apache2 restart
+# Apacheをフォアグラウンドで実行
+CMD ["apache2-foreground"]

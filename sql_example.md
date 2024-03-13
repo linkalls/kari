@@ -8,7 +8,7 @@
 
 ```sql
 CREATE TABLE users (
-    user_id CHAR(32) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
     username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id)
@@ -24,7 +24,7 @@ CREATE TABLE short_urls (
     id INT AUTO_INCREMENT NOT NULL,
     short_url VARCHAR(255) NOT NULL,
     original_url VARCHAR(2048) NOT NULL,
-    user_id CHAR(32),
+    user_id VARCHAR(255),
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );

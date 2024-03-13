@@ -9,24 +9,20 @@ include 'db.php';
 
 $userId = $_SESSION["user_id"];
 
-// ページ番号を取得
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$limit = 5;
-$offset = ($page - 1) * $limit;
-
 $sql = "SELECT u.original_url, u.short_url, u.created_at, COUNT(a.accessed_at) as access_count 
  FROM short_urls u 
- LEFT JOIN url_accesses a ON u.id = a.short_url_id 
+ LEFT JOIN url_accesses a ON u.id = a.short_url_id
  WHERE u.user_id = ? 
- GROUP BY u.original_url, u.short_url, u.created_at
- LIMIT ? OFFSET ?";
+ GROUP BY u.original_url, u.short_url, u.created_at";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('iii', $userId, $limit, $offset);
+$stmt->bind_param('i', $_SESSION['user_id']);
 $stmt->execute();
 
 $result = $stmt->get_result();
 $urls = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+
 
 // データを並び替え
 $sortOrder = $_GET['sortOrder'] ?? 'created_at';
@@ -64,8 +60,16 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
         <option value="daily">日別</option>
         <option value="monthly">月別</option>
       </select>
+      <?php if (count($urls) === 0): ?>
+        <p>まだデータがありません。</p>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block" onclick="redirectToIndex()">
+          短縮URLを作成してみよう
+        </button>
+        <?php else: ?>
       <canvas id="urlAnalysisChart"></canvas>
+      <?php endif; ?>
     </div>
+    <?php if (count($urls) > 0): ?>
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block" onclick="redirectToIndex()">
       短縮URLを作成する
     </button>
@@ -90,6 +94,7 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
               </th>
             </tr>
           </thead>
+          <?php if (count($urls) > 0): ?>
           <tbody>
     <?php foreach ($urls as $url): ?>
     <tr>
@@ -100,11 +105,13 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
     </tr>
     <?php endforeach; ?>
   </tbody>
+  <?php endif; ?>
 </table>
       </div>
     </div>
   </div>
 </div>
+<?php endif; ?>
 <script>
     function redirectToIndex() {
       window.location.href = 'index.php';
@@ -147,6 +154,11 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
     });
 
     updateChart('daily');
- </script>
+
+  // index.phpにリダイレクトする urlない時
+    function redirectToIndex() {
+    window.location.href = 'index.php';
+}
+</script>
 </body>
 </html>

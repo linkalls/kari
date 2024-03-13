@@ -52,7 +52,7 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
 </head>
 <body class="bg-gray-100 p-4 sm:p-10">
  <div class="container mx-auto flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-3xl font-bold mb-4 text-center mt-10">ダッシュボードへようこそ</h1>
+    <h1 class="text-2xl sm:text-3xl font-bold mb-4 text-center mt-10">ダッシュボードへようこそ</h1>
     <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto">
       <select id="periodSelect" class="mb-4 block w-full">
         <option value="daily">日別</option>
@@ -70,16 +70,16 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2 break-all">
+              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2 break-all">
                 元URL
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
                 短縮URL
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
+              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
                 作成日
               </th>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
+              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
                 アクセス数
               </th>
             </tr>
@@ -87,10 +87,10 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
           <tbody>
             <?php foreach ($urls as $url): ?>
             <tr>
-              <td class="border px-4 py-2 word-break"><?php echo $url['original_url']; ?></td>
-              <td class="border px-4 py-2"><?php echo $url['short_url']; ?></td>
-              <td class="border px-4 py-2"><?php echo $url['created_at']; ?></td>
-              <td class="border px-4 py-2"><?php echo $url['access_count']; ?></td>
+              <td class="border px-2 sm:px-4 py-2 word-break"><?php echo $url['original_url']; ?></td>
+              <td class="border px-2 sm:px-4 py-2"><?php echo $url['short_url']; ?></td>
+              <td class="border px-2 sm:px-4 py-2"><?php echo $url['created_at']; ?></td>
+              <td class="border px-2 sm:px-4 py-2"><?php echo $url['access_count']; ?></td>
             </tr>
             <?php endforeach; ?>
             </tbody>

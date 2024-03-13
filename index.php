@@ -55,9 +55,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
     if ($stmt->execute()) {
       $shortUrlMessage = "your_domain.com/" . $shortUrl;
-    } else {
+      $_SESSION['flash_message'] = "短縮URLの生成が完了しました。";
+      $_SESSION['shortUrlMessage'] = $shortUrlMessage;
+      header("Location: index.php"); // リダイレクトを追加
+      exit;
+  } else {
       $shortUrlMessage = "エラー: " . $sql . "<br>" . $conn->error;
-    }
+      $_SESSION['error'] = $shortUrlMessage;
+      header("Location: index.php"); // リダイレクトを追加
+      exit;
+  }
   }
 }
 ?>
@@ -114,21 +121,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 
     <!-- フラッシュメッセージ -->
-    <?php if (isset($_SESSION['flash_message'])): ?>
-      <div id="flash-message" class="bg-green-500 text-white p-4 rounded-md mb-4 mt-4 relative">
-        <?php 
-        echo $_SESSION['flash_message'];
-        unset($_SESSION['flash_message']);
-        ?>
-        <span id="close-button" class="absolute top-0 right-0 p-4">X</span>
-      </div>
-      <script>
-        document.getElementById('flash-message').style.display = 'block';
-        document.getElementById('close-button').addEventListener('click', function() {
-          document.getElementById('flash-message').style.display = 'none';
-        });
-      </script>
-    <?php endif; ?>
+<?php if (isset($_SESSION['flash_message'])): ?>
+  <div id="flash-message" class="bg-green-500 text-white p-4 rounded-md mb-4 mt-4 relative">
+    <?php 
+    echo $_SESSION['flash_message'];
+    unset($_SESSION['flash_message']); // フラッシュメッセージを表示した後にセッション変数をクリア
+    ?>
+    <span id="close-button" class="absolute top-0 right-0 p-4">X</span>
+  </div>
+  <script>
+    document.getElementById('flash-message').style.display = 'block';
+    document.getElementById('close-button').addEventListener('click', function() {
+      document.getElementById('flash-message').style.display = 'none';
+    });
+  </script>
+<?php endif; ?>
 
     <!-- エラーメッセージ -->
     <?php if (isset($_SESSION['error'])): ?>
@@ -149,25 +156,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     endif; 
     ?>
 
-    <!-- コピー機能 -->
-    <?php if (isset($shortUrlMessage)): ?>
-      <div class="flex items-center mt-2">
-        <input type="text" readonly class="mr-2 p-2 border border-gray-300 rounded" style="color: black;" value="<?php echo $shortUrlMessage; ?>">
-        <button id="copyButton" class="p-2 rounded bg-indigo-500 text-white hover:bg-indigo-700 transition duration-200">コピー</button>
-      </div>
-      <div id="copyMessage"></div>
-      <script>
-        document.getElementById('copyButton').addEventListener('click', function(event) {
-          event.preventDefault();
-          var text = "<?php echo $shortUrlMessage; ?>";
-          navigator.clipboard.writeText(text).then(function() {
-            document.getElementById('copyMessage').textContent = 'コピーされました';
-          }, function(err) {
-            console.error('Could not copy text: ', err);
-          });
-        });
-      </script>
-    <?php endif; ?>
+<!-- コピー機能 -->
+<?php if (isset($_SESSION['shortUrlMessage'])): ?>
+  <div class="flex items-center mt-2">
+    <input type="text" readonly class="mr-2 p-2 border border-gray-300 rounded" style="color: black;" value="<?php echo $_SESSION['shortUrlMessage']; ?>">
+    <button id="copyButton" class="p-2 rounded bg-indigo-500 text-white hover:bg-indigo-700 transition duration-200">コピー</button>
+  </div>
+  <div id="copyMessage"></div>
+  <script>
+    document.getElementById('copyButton').addEventListener('click', function(event) {
+      event.preventDefault();
+      var text = "<?php echo $_SESSION['shortUrlMessage']; ?>";
+      navigator.clipboard.writeText(text).then(function() {
+        document.getElementById('copyMessage').textContent = 'コピーされました';
+        $_SESSION['flash_message'] = "コピーしました。";
+        header("Location: index.php");
+        exit;
+      }, function(err) {
+        console.error('Could not copy text: ', err);
+      });
+    });
+  </script>
+<?php 
+unset($_SESSION['shortUrlMessage']); // 短縮URLを表示した後に$_SESSION['shortUrlMessage']を削除
+  endif; 
+?>
   </div>
   <script src="urlsx.js"></script>
 </body>

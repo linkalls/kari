@@ -67,34 +67,34 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
   <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
       <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm overflow-auto">
           <thead class="bg-gray-50">
             <tr>
-              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2 break-all">
+              <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4 break-all">
                 元URL
               </th>
-              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+              <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">
                 短縮URL
               </th>
-              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
+              <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">
                 作成日
               </th>
-              <th scope="col" class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
+              <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">
                 アクセス数
               </th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($urls as $url): ?>
-            <tr>
-              <td class="border px-2 sm:px-4 py-2 word-break"><?php echo $url['original_url']; ?></td>
-              <td class="border px-2 sm:px-4 py-2"><?php echo $url['short_url']; ?></td>
-              <td class="border px-2 sm:px-4 py-2"><?php echo $url['created_at']; ?></td>
-              <td class="border px-2 sm:px-4 py-2"><?php echo $url['access_count']; ?></td>
-            </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
+    <?php foreach ($urls as $url): ?>
+    <tr>
+      <td class="border px-1 sm:px-2 py-2 word-break break-all text-xs sm:text-sm"><?php echo $url['original_url']; ?></td>
+      <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['short_url']; ?></td>
+      <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['created_at']; ?></td>
+      <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['access_count']; ?></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
       </div>
     </div>
   </div>

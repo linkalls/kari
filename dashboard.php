@@ -9,13 +9,19 @@ include 'db.php';
 
 $userId = $_SESSION["user_id"];
 
+// ページ番号を取得
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$limit = 5;
+$offset = ($page - 1) * $limit;
+
 $sql = "SELECT u.original_url, u.short_url, u.created_at, COUNT(a.accessed_at) as access_count 
  FROM short_urls u 
  LEFT JOIN url_accesses a ON u.id = a.short_url_id 
  WHERE u.user_id = ? 
- GROUP BY u.original_url, u.short_url, u.created_at";
+ GROUP BY u.original_url, u.short_url, u.created_at
+ LIMIT ? OFFSET ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $userId);
+$stmt->bind_param('iii', $userId, $limit, $offset);
 $stmt->execute();
 
 $result = $stmt->get_result();
@@ -26,17 +32,17 @@ $stmt->close();
 $sortOrder = $_GET['sortOrder'] ?? 'created_at';
 $sortDirection = $_GET['sortDirection'] ?? 'asc';
 usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
-    $result = 0;
-    if ($sortOrder === 'created_at') {
-        $result = strtotime($a['created_at']) - strtotime($b['created_at']);
-    } elseif ($sortOrder === 'access_count') {
-        $result = $a['access_count'] - $b['access_count'];
-    } elseif ($sortOrder === 'original_url') {
-        $result = strcmp($a['original_url'], $b['original_url']);
-    } elseif ($sortOrder === 'short_url') {
-        $result = strcmp($a['short_url'], $b['short_url']);
-    }
-    return $sortDirection === 'asc' ? $result : -$result;
+  $result = 0;
+  if ($sortOrder === 'created_at') {
+    $result = strtotime($a['created_at']) - strtotime($b['created_at']);
+  } elseif ($sortOrder === 'access_count') {
+    $result = $a['access_count'] - $b['access_count'];
+  } elseif ($sortOrder === 'original_url') {
+    $result = strcmp($a['original_url'], $b['original_url']);
+  } elseif ($sortOrder === 'short_url') {
+    $result = strcmp($a['short_url'], $b['short_url']);
+  }
+  return $sortDirection === 'asc' ? $result : -$result;
 });
 ?>
 

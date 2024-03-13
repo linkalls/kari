@@ -37,7 +37,7 @@ CREATE TABLE short_urls (
 ```sql
 CREATE TABLE url_accesses (
     id INT AUTO_INCREMENT NOT NULL,
-    short_url_id INT NOT NULL,
+    short_url_id INT ,
     accessed_at DATETIME NOT NULL,
     referrer VARCHAR(2048),
     client_ip VARCHAR(45),

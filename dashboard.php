@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION["user_id"])) {
+if (!isset($_SESSION["user_id"]) || $_SESSION["user_id"] == 0) {
  header("Location: login.php");
  exit;
 }
@@ -12,7 +12,7 @@ $userId = $_SESSION["user_id"];
 $sql = "SELECT u.original_url, u.short_url, u.created_at, COUNT(a.accessed_at) as access_count 
  FROM short_urls u 
  LEFT JOIN url_accesses a ON u.id = a.short_url_id
- WHERE u.user_id = ? 
+ WHERE u.user_id = ? AND u.user_id != 0
  GROUP BY u.original_url, u.short_url, u.created_at";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $_SESSION['user_id']);
@@ -21,8 +21,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $urls = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
-
-
 
 // データを並び替え
 $sortOrder = $_GET['sortOrder'] ?? 'created_at';

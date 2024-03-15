@@ -4,7 +4,7 @@ require 'db.php';
 
 // リクエストURIから短縮URLを取得する
 $path = $_SERVER['REQUEST_URI'];
-$short_url = ltrim($path, '/');  // 先頭の'/'を削除
+$short_url = ltrim(urldecode($path), '/');  // 先頭の'/'を削除
 
 // 短縮URLが設定されていない場合はエラーメッセージを出力して終了
 if (empty($short_url)) {
@@ -31,8 +31,9 @@ if ($row) {
   // アクセスログを保存する
   $referrer = $_SERVER['HTTP_REFERER'] ?? '';
   $client_ip = $_SERVER['REMOTE_ADDR'];
-  $stmt = $conn->prepare("INSERT INTO url_accesses (short_url_id, accessed_at, referrer, client_ip) VALUES (?, NOW(), ?, ?)");
-  $stmt->bind_param('iss', $short_url_id, $referrer, $client_ip);
+  $user_agent = $_SERVER['HTTP_USER_AGENT'];
+  $stmt = $conn->prepare("INSERT INTO url_accesses (short_url_id, accessed_at, referrer, client_ip, user_agent) VALUES (?, NOW(), ?, ?, ?)");
+  $stmt->bind_param('isss', $short_url_id, $referrer, $client_ip, $user_agent);
   $stmt->execute();
 
   // 新しく挿入されたレコードのIDを取得する

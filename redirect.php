@@ -32,17 +32,21 @@ if ($row) {
   $referrer = $_SERVER['HTTP_REFERER'] ?? '';
   $client_ip = $_SERVER['REMOTE_ADDR'];
   $user_agent = $_SERVER['HTTP_USER_AGENT'];
-  $stmt = $conn->prepare("INSERT INTO url_accesses (short_url_id, accessed_at, referrer, client_ip, user_agent) VALUES (?, NOW(), ?, ?, ?)");
-  $stmt->bind_param('isss', $short_url_id, $referrer, $client_ip, $user_agent);
-  $stmt->execute();
 
-  // 新しく挿入されたレコードのIDを取得する
-  $url_access_id = $conn->insert_id;
-
-  // url_accessesテーブルのshort_url_idを更新する
-  $stmt = $conn->prepare("UPDATE url_accesses SET short_url_id = ? WHERE id = ?");
-  $stmt->bind_param('ii', $short_url_id, $url_access_id);
+  // 同じIPからの最後のアクセスを検索
+  $sql = "SELECT accessed_at FROM url_accesses WHERE client_ip = ? ORDER BY accessed_at DESC LIMIT 1";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param('s', $client_ip);
   $stmt->execute();
+  $result = $stmt->get_result();
+  $last_access = $result->fetch_assoc();
+
+  // 最後のアクセスから1分以上経過している場合のみログを保存
+  if (!$last_access || time() - strtotime($last_access['accessed_at']) > 60) {
+    $stmt = $conn->prepare("INSERT INTO url_accesses (short_url_id, accessed_at, referrer, client_ip, user_agent) VALUES (?, NOW(), ?, ?, ?)");
+    $stmt->bind_param('isss', $short_url_id, $referrer, $client_ip, $user_agent);
+    $stmt->execute();
+  }
 } else {
   // レコードが見つからなかった場合はエラーメッセージを出力
   echo "URLが見つかりません。";

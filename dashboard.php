@@ -112,50 +112,14 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
               </div>
               </div>
               </div>
-              <?php endif; ?>
               <script>
               function redirectToIndex() {
                 window.location.href = 'index.php';
               }
-
-              let chart;
-              const ctx = document.getElementById('urlAnalysisChart').getContext('2d');
-
-              function updateChart(period) {
-                if (chart) {
-                  chart.destroy();
-                }
-                $.getJSON('get_data.php', { period: period }, function(data) {
-                  chart = new Chart(ctx, {
-                    type: 'line',
-                    data: data,
-                    options: {
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      scales: {
-                        x: {
-                          type: 'time',
-                          time: {
-                            unit: 'day',
-                            displayFormats: {
-                              day: 'YYYY-MM-DD',
-                            },
-                          },
-                        },
-                        y: {
-                          beginAtZero: true,
-                          precision: 0,
-                        },
-                      },
-                    },
-                  });
-                });
-              }
+              
               </script>
             </tr>
-            <?php endforeach; ?>
           </tbody>
-          <?php endif; ?>
 </table>
       </div>
     </div>

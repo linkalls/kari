@@ -25,12 +25,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $checkStmt = $conn->prepare($checkSql);
     $checkStmt->bind_param("s", $shortUrl);
   }
-
   if ($customPath) {
-    $shortUrl = $customPath;
+    // カスタムパスがユニコードエスケープされた文字列である場合に元の文字列に戻す
+    if (preg_match('/\\\\u([a-fA-F0-9]{4})/', $customPath)) {
+      $customPath = json_decode('"' . $customPath . '"');
+    }
+
+    // データベースで重複をチェック
     $checkCustomPathSql = "SELECT * FROM short_urls WHERE short_url = ?";
     $checkCustomPathStmt = $conn->prepare($checkCustomPathSql);
-    $checkCustomPathStmt->bind_param("s", $shortUrl);
+    $checkCustomPathStmt->bind_param("s", $customPath);
     $checkCustomPathStmt->execute();
     $checkCustomPathResult = $checkCustomPathStmt->get_result();
 
@@ -38,9 +42,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $_SESSION['error'] = "エラー: そのカスタムパスは既に存在します。";
       header("Location: index.php");
       exit;
+    } else {
+      // 元の文字列をshort_urlとしてデータベースに保存
+      $insertSql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
+      $insertStmt = $conn->prepare($insertSql);
+      $insertStmt->bind_param("sss", $customPath, $originalUrl, $user_id);
+      if (!$insertStmt->execute()) {
+        echo "SQLエラー: " . $insertStmt->error; // SQLエラーを出力
+      }
     }
   }
-
   $checkStmt->execute();
   $checkResult = $checkStmt->get_result();
 

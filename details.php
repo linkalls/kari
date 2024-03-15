@@ -98,9 +98,12 @@ $stmt->close();
       datasets: [{
         label: 'アクセス数',
         data: <?php echo json_encode(array_column($accesses, 'access_count')); ?>,
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1
+        backgroundColor: 'rgba(144, 238, 144, 0.2)', // 薄い緑色
+        borderColor: 'rgba(144, 238, 144, 1)', // 薄い緑色
+        borderWidth: 1,
+        // データポイント間を線でつなぎます
+        fill: false,
+        lineTension: 0
       }]
     };
 
@@ -108,7 +111,29 @@ $stmt->close();
     var options = {
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          ticks: {
+            // y軸の単位を整数に制限します
+            precision: 0,
+            // y軸の単位を5にします
+            stepSize: 5
+          },
+          title: {
+            display: true,
+            text: 'アクセス数'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'アクセス時間'
+          }
+        }
+      },
+      elements: {
+        point: {
+          // データポイントに点を表示します
+          radius: 5
         }
       }
     };

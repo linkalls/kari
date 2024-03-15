@@ -116,7 +116,10 @@ $stmt->close();
             // y軸の単位を整数に制限します
             precision: 0,
             // y軸の単位を5にします
-            stepSize: 5
+            stepSize: 5,
+            // y軸の範囲を0から10に設定します
+            min: 0,
+            max: 5,
           },
           title: {
             display: true,

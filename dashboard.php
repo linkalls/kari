@@ -103,7 +103,7 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
               <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['short_url']; ?></td>
               <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['created_at']; ?></td>
               <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['access_count']; ?></td>
-              <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><a href="details.php?short_url=<?php echo $url['short_url']; ?>">詳細へ</a></td>
+              <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><a href="details.php?short_url=<?php echo $url['short_url']; ?>" style="color:  blue;">詳細へ</a></td>
               <?php endforeach; ?>
               </tbody>
               <?php endif; ?>

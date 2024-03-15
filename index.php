@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("sss", $shortUrl, $originalUrl, $user_id);
   
     if ($stmt->execute()) {
-      $shortUrlMessage = "your_domain.com/" . $shortUrl;
+      $shortUrlMessage = $_SERVER['HTTP_HOST'] . "/" . $shortUrl;
       $_SESSION['flash_message'] = "短縮URLの生成が完了しました。";
       $_SESSION['shortUrlMessage'] = $shortUrlMessage;
       header("Location: index.php"); // リダイレクトを追加

@@ -90,20 +90,72 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
               <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">
                 アクセス数
               </th>
+              <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                詳細
+              </th>
             </tr>
           </thead>
           <?php if (count($urls) > 0): ?>
           <tbody>
-    <?php foreach ($urls as $url): ?>
-    <tr>
-      <td class="border px-1 sm:px-2 py-2 word-break break-all text-xs sm:text-sm"><?php echo $url['original_url']; ?></td>
-      <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['short_url']; ?></td>
-      <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['created_at']; ?></td>
-      <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['access_count']; ?></td>
-    </tr>
-    <?php endforeach; ?>
-  </tbody>
-  <?php endif; ?>
+            <?php foreach ($urls as $url): ?>
+            <tr>
+              <td class="border px-1 sm:px-2 py-2 word-break break-all text-xs sm:text-sm"><?php echo $url['original_url']; ?></td>
+              <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['short_url']; ?></td>
+              <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['created_at']; ?></td>
+              <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['access_count']; ?></td>
+              <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><a href="details.php?short_url=<?php echo $url['short_url']; ?>">詳細へ</a></td>
+              <?php endforeach; ?>
+              </tbody>
+              <?php endif; ?>
+              </table>
+              </div>
+              </div>
+              </div>
+              </div>
+              <?php endif; ?>
+              <script>
+              function redirectToIndex() {
+                window.location.href = 'index.php';
+              }
+
+              let chart;
+              const ctx = document.getElementById('urlAnalysisChart').getContext('2d');
+
+              function updateChart(period) {
+                if (chart) {
+                  chart.destroy();
+                }
+                $.getJSON('get_data.php', { period: period }, function(data) {
+                  chart = new Chart(ctx, {
+                    type: 'line',
+                    data: data,
+                    options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                        x: {
+                          type: 'time',
+                          time: {
+                            unit: 'day',
+                            displayFormats: {
+                              day: 'YYYY-MM-DD',
+                            },
+                          },
+                        },
+                        y: {
+                          beginAtZero: true,
+                          precision: 0,
+                        },
+                      },
+                    },
+                  });
+                });
+              }
+              </script>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+          <?php endif; ?>
 </table>
       </div>
     </div>

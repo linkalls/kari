@@ -41,6 +41,7 @@ CREATE TABLE url_accesses (
     accessed_at DATETIME NOT NULL,
     referrer VARCHAR(2048),
     client_ip VARCHAR(45),
+    user_agent VARCHAR(255),
     PRIMARY KEY (id),
     FOREIGN KEY (short_url_id) REFERENCES short_urls(id)
 );

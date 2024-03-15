@@ -66,6 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="submit" value="サインアップ" class="w-full px-3 py-2 text-white bg-blue-500 rounded hover:bg-blue-600" aria-label="サインアップ">
       </div>
     </form>
+    <div class="mt-4">
+      <a href="login.php" class="w-full px-3 py-2 text-white bg-green-500 rounded hover:bg-green-600">ログイン</a>
+    </div>
     <?php if (isset($error)): ?>
       <p class="text-red-500"><?php echo $error; ?></p>
     <?php endif; ?>

@@ -26,15 +26,27 @@ if ($row) {
   $short_url_id = $row['id'];
   $user_id = $row['user_id'];
 
-  // 元のURLにリダイレクトする
-  header("Location: $original_url");
+  // 元のURLが有効なURLであることを確認する
+  if (filter_var($original_url, FILTER_VALIDATE_URL)) {
+    // 元のURLにリダイレクトする
+    header("Location: $original_url");
+  } else {
+    // 元のURLが無効な場合はエラーメッセージを出力
+    echo "無効なURLです。";
+    exit;
+  }
 
-  // ユーザーIDが0でない場合のみアクセスログを保存する
-  if ($user_id != 0) {
+  // ユーザーIDが0でない場合、または特定のUserAgentでない場合のみアクセスログを保存する
+  $user_agent = $_SERVER['HTTP_USER_AGENT'];
+  $ignored_user_agents = [
+    'facebookexternalhit/1.1;line-poker/1.0',
+    'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
+    'Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)'
+  ];
+  if ($user_id != 0 && !in_array($user_agent, $ignored_user_agents)) {
     // アクセスログを保存する
     $referrer = $_SERVER['HTTP_REFERER'] ?? '';
     $client_ip = $_SERVER['REMOTE_ADDR'];
-    $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
     // 同じIPからの最後のアクセスを検索
     $sql = "SELECT accessed_at FROM url_accesses WHERE client_ip = ? ORDER BY accessed_at DESC LIMIT 1";

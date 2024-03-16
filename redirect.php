@@ -95,7 +95,7 @@ if ($row) {
     </label>
     <div class="menu hidden md:block">
       <a href="/" class="text-white no-underline hover:text-gray-200 mr-4">Home</a>
-      <a href="/about" class="text-white no-underline hover:text-gray-200 mr-4">About</a>
+      <a href="/about.html" class="text-white no-underline hover:text-gray-200 mr-4">About</a>
       <a href="/contact" class="text-white no-underline hover:text-gray-200">Contact</a>
     </div>
   </nav>

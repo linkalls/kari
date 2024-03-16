@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>About - kari URL Shortening Service</title>
+ <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+ <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="font-sans bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 min-h-screen flex items-center justify-center text-white">
+ <div class="bg-white p-6 rounded shadow-md text-black w-full max-w-md">
+      <h1 class="text-3xl mb-4">About kari</h1>
+      <p class="text-lg">
+        kariは、シンプルなインターフェースでユーザーがURLを短縮し、それを他のユーザーと共有するためのウェブサービスです。このプロジェクトは、PHPを使用して開発され、ユーザー認証、URLの短縮、アクセスログの記録などの機能を提供します。
+      </p>
+      <h2 class="text-2xl mb-4 mt-8">Features</h2>
+      <ul class="list-disc list-inside">
+        <li>ユーザー認証: ユーザーは自分のアカウントを作成し、ログインすることで、短縮URLを保存し、ダッシュボードからアクセスログを確認することができます。</li>
+        <li>URLの短縮: ユーザーは長いURLを短縮し、それを他のユーザーと共有することができます。短縮URLは、元のURLへのリダイレクトを提供します。</li>
+        <li>アクセスログ: 短縮URLへのアクセスは記録され、ユーザーはダッシュボードからアクセス数やアクセス元を確認することができます。</li>
+        <li>実行しやすさ: レンタルサーバーでも実行しやすいようにphpで書かれています。</li>
+      </ul>
+      <h2 class="text-2xl mb-4 mt-8">How to Use</h2>
+      <ol class="list-decimal list-inside">
+        <li>ユーザー登録: ユーザーはサインアップページから新しいアカウントを作成します。</li>
+        <li>ログイン: ユーザーはログインページから既存のアカウントでログインします。</li>
+        <li>URLの短縮: ユーザーはダッシュボードからURLを短縮し、それを他のユーザーと共有します。</li>
+        <li>アクセスログの確認: ユーザーはダッシュボードから短縮URLへのアクセスログを確認します。</li>
+      </ol>
+      <h2 class="text-2xl mb-4 mt-8">Technologies Used</h2>
+      <ul class="list-disc list-inside">
+        <li>フロントエンド: HTML、CSS、JavaScript, Tailwind CSS</li>
+        <li>バックエンド: PHP</li>
+        <li>データベース: MySQL</li>
+      </ul>
+      <h2 class="text-2xl mb-4 mt-8">Security</h2>
+      <ul class="list-disc list-inside">
+        <li>パスワードハッシュ: ユーザーのパスワードは安全にハッシュされてデータベースに保存されます。</li>
+        <li>SQLインジェクション対策: プリペアドステートメントを使用してSQLインジェクション攻撃を防ぎます。</li>
+      </ul>
+      <h2 class="text-2xl mb-4 mt-8">Contributing</h2>
+      <p class="text-lg">
+        バグ報告や機能改善の提案は、プロジェクトの成長に寄与します。貢献をお待ちしています。
+      </p>
+ </div>
+</body>
+</html>

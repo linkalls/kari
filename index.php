@@ -96,6 +96,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <title>URL短縮サービス</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- OGP -->
+  <meta property="og:title" content="URL短縮サービス" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kariter.com" /> <!-- ここに自分のURLを入れる -->
+  <meta property="og:image" content="http://kariter.com/ogp.png" />
+  <meta property="og:description" content="短縮url生成サービス「kari」" />
+  
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@potetotown" /> <!--  ここに自分のTwitterアカウントを入れる -->
+  <meta name="twitter:title" content="URL短縮サービス「kari」" />
+  <meta name="twitter:description" content="短縮url生成サービス「kari」" />
+  <meta name="twitter:image" content="https://kariter.com/ogp.png" />
   <style>
     #flash-message, #error-message {
       position: fixed;

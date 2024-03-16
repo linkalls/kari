@@ -49,13 +49,18 @@ $stmt->close();
  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
  <!-- Chart.jsを読み込みます -->
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <style>
+  .text-container {
+    overflow: auto;
+    word-wrap: break-word;
+  }
+ </style>
 </head>
 <body class="bg-gray-100 p-4 sm:p-10">
- <div class="container mx-auto flex flex-col items-center justify-center min-h-screen">
     <h1 class="text-2xl sm:text-3xl font-bold mb-4 text-center mt-10">URL詳細</h1>
     <!-- アクセス解析のグラフを表示します。 -->
 <canvas id="accessChart" class="mb-4" style="max-width: 100%; max-height: 500px; width: 100%; height: auto;"></canvas>
-    <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto">
+    <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto text-container">
       <p><strong>元URL:</strong> <?php echo $url['original_url']; ?></p>
       <p><strong>短縮URL:</strong> <?php echo $url['short_url']; ?></p>
       <p><strong>作成日:</strong> <?php echo $url['created_at']; ?></p>
@@ -66,7 +71,7 @@ $stmt->close();
       ダッシュボードに戻る
     </button>
     <!-- アクセス履歴表示 -->
-    <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto">
+    <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto text-container">
       <table id="accessHistoryTable" class="w-full text-left table-auto">
         <thead>
           <tr>
@@ -88,6 +93,7 @@ $stmt->close();
       </table>
     </div>
  </div>
+
  <script>
     function redirectToDashboard() {
       window.location.href = 'dashboard.php';
@@ -168,7 +174,7 @@ document.querySelector('.sort-button').addEventListener('click', function() {
     var message = direction === 'asc' ? "新しい順に並び替えました。" : "古い順に並び替えました。";
     var flashMessage = document.createElement('div');
     flashMessage.textContent = message;
-    flashMessage.className = "bg-green-500 text-white p-4 rounded-md mb-4 mt-4 relative";
+    flashMessage.className = "bg-green-500 text-white p-4 rounded-md mb-4 mt-4 absolute top-0 right-0 m-4";
     document.body.appendChild(flashMessage);
     setTimeout(function() {
         document.body.removeChild(flashMessage);

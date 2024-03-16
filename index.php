@@ -139,6 +139,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="text" name="customPath" id="customPath" placeholder="カスタムパス（オプション）" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-lg border-gray-300 rounded-md p-3 bg-gray-100" style="color: black;" value="<?php echo isset($_POST['customPath']) ? htmlspecialchars($_POST['customPath']) : ''; ?>">
       </div>
       <button type="submit" class="p-2 rounded bg-indigo-500 text-white mt-2 hover:bg-indigo-700 transition duration-200">短縮URLを作成</button>
+      <?php if (!isset($_SESSION["user_id"])): ?>
+        <p class="text-red-500">＊ログインしていないユーザーが作成した短縮urlは30日後に自動で削除されます</p>
+      <?php endif; ?>
     </form>
 
     <!-- フラッシュメッセージ -->

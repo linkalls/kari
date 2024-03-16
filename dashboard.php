@@ -53,6 +53,9 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
 <body class="bg-gray-100 p-4 sm:p-10">
  <div class="container mx-auto flex flex-col items-center justify-center min-h-screen">
     <h1 class="text-2xl sm:text-3xl font-bold mb-4 text-center mt-10">ダッシュボードへようこそ</h1>
+    <div id="flash-message" class="hidden fixed top-0 right-0 bg-green-500 text-white p-2 rounded-lg m-4">
+      短縮URLを削除しました。
+    </div>
     <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto">
       <select id="periodSelect" class="mb-4 block w-full">
         <option value="daily">日別</option>
@@ -104,6 +107,7 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
               <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['created_at']; ?></td>
               <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><?php echo $url['access_count']; ?></td>
               <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><a href="details.php?short_url=<?php echo $url['short_url']; ?>" style="color:  blue;">詳細へ</a></td>
+              <td class="border px-1 sm:px-2 py-2 text-xs sm:text-sm overflow-auto"><button class="delete-button" data-short-url="<?php echo $url['short_url']; ?>">削除</button></td>
               <?php endforeach; ?>
               </tbody>
               <?php endif; ?>
@@ -168,6 +172,33 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
     });
 
     updateChart('daily');
+
+// 削除ボタンがクリックされたときの処理
+$(document).on('click', '.delete-button', function() {
+  const shortUrl = $(this).data('short-url');
+  // 確認メッセージを表示
+  if (confirm('本当に削除しますか？')) {
+    $.post('delete_url.php', { shortUrl: shortUrl }, function(response) {
+      // 削除が成功した場合のみフラッシュメッセージを表示
+      if (response.success) {
+        $('#flash-message').text('短縮URLを削除しました。').removeClass('hidden');
+        setTimeout(function() {
+          $('#flash-message').addClass('hidden');
+        }, 3000);  // 3秒後にメッセージを非表示にする
+
+        // 削除したURLの行をテーブルから削除
+        $('button[data-short-url="' + shortUrl + '"]').closest('tr').remove();
+      } else {
+        // 削除が失敗した場合はエラーメッセージを表示
+        $('#flash-message').text('短縮URLの削除に失敗しました。').removeClass('hidden');
+        setTimeout(function() {
+          $('#flash-message').addClass('hidden');
+        }, 3000);  // 3秒後にメッセージを非表示にする
+      }
+    }, 'json');
+  }
+});
+
 
   // index.phpにリダイレクトする urlない時
     function redirectToIndex() {

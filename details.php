@@ -73,6 +73,7 @@ $stmt->close();
             <th class="px-4 py-2">アクセス日時 <button class="sort-button">▽</button></th>
             <th class="px-4 py-2">IPアドレス</th>
             <th class="px-4 py-2">ブラウザ情報</th>
+            
           </tr>
         </thead>
         <tbody>

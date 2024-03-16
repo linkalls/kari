@@ -3,6 +3,11 @@ include 'db.php';
 
 session_start();
 
+// トークンの生成
+if (empty($_SESSION['csrf_token'])) {
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $originalUrl = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL);
   $customPath = filter_input(INPUT_POST, 'customPath', FILTER_SANITIZE_STRING);
@@ -121,7 +126,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
       </div>
     </div>
+    <!-- フォーム -->
     <form id="url-form" class="flex flex-col" method="post">
+      <!-- トークンを含める -->
+    <input type="hidden" name="token" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8'); ?>">
       <div class="mb-4">
         <label for="url" class="block text-lg font-medium text-gray-700">URLを入力</label>
         <input type="text" name="url" id="url" placeholder="URLを入力" required class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-lg border-gray-300 rounded-md p-3 bg-gray-100 text-gray" style="color: black;" value="<?php echo isset($_POST['url']) ? htmlspecialchars($_POST['url']) : ''; ?>">
@@ -137,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php if (isset($_SESSION['flash_message'])): ?>
   <div id="flash-message" class="bg-green-500 text-white p-4 rounded-md mb-4 mt-4 relative">
     <?php 
-    echo $_SESSION['flash_message'];
+    echo htmlspecialchars($_SESSION['flash_message'], ENT_QUOTES, 'UTF-8');
     unset($_SESSION['flash_message']); // フラッシュメッセージを表示した後にセッション変数をクリア
     ?>
     <span id="close-button" class="absolute top-0 right-0 p-4">X</span>

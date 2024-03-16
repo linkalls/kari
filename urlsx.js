@@ -79,6 +79,7 @@ function copyToClipboard() {
     alert("エラー: URLをコピーできませんでした");
   });
 }
+
 // URLを短縮する関数
 function shortenUrl() {
   const originalUrl = document.getElementById('url').value;
@@ -104,9 +105,3 @@ function shortenUrl() {
     console.error('Error:', error);
   });
 }
-// ボタンのクリックを処理
-document.getElementById('shorten-button').addEventListener('click', function(event) {
-  event.preventDefault();
-  shortenUrl();
-});
-

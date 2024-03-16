@@ -6,10 +6,12 @@ require 'db.php';
 $path = $_SERVER['REQUEST_URI'];
 $short_url = ltrim(urldecode($path), '/');  // 先頭の'/'を削除
 
-// 短縮URLが設定されていない場合はエラーメッセージを出力して終了
+// エラーメッセージを格納する変数
+$error_message = '';
+
+// 短縮URLが設定されていない場合はエラーメッセージを設定
 if (empty($short_url)) {
-  echo "URLパラメータがありません。";
-  exit;
+  $error_message = "この短縮urlは存在しないか削除された可能性があります。";
 }
 
 // 短縮URLに対応するレコードをshort_urlsテーブルから検索する
@@ -31,9 +33,8 @@ if ($row) {
     // 元のURLにリダイレクトする
     header("Location: $original_url");
   } else {
-    // 元のURLが無効な場合はエラーメッセージを出力
-    echo "無効なURLです。";
-    exit;
+    // 元のURLが無効な場合はエラーメッセージを設定
+    $error_message = "無効なURLです。";
   }
 
   // ユーザーIDが0でない場合、または特定のUserAgentでない場合のみアクセスログを保存する
@@ -64,6 +65,33 @@ if ($row) {
     }
   }
 } else {
-  // レコードが見つからなかった場合はエラーメッセージを出力
-  echo "URLが見つかりません。";
+  // レコードが見つからなかった場合はエラーメッセージを設定
+  $error_message = "URLが見つかりません。存在しないか削除された可能性があります。";
 }
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-200 text-gray-800 antialiased font-sans min-h-screen flex flex-col">
+  <nav class="bg-gray-800 text-white px-6 py-4">
+    <div class="flex justify-between">
+      <a href="/" class="text-white no-underline hover:text-gray-200">Home</a>
+      <a href="/about" class="text-white no-underline hover:text-gray-200 ml-6">About</a>
+      <a href="/contact" class="text-white no-underline hover:text-gray-200 ml-6">Contact</a>
+    </div>
+  </nav>
+
+  <main class="container mx-auto max-w-xl p-6 flex-grow">
+    <h1 class="text-3xl font-bold text-red-500 mb-4">エラーが発生しました</h1>
+    <p class="text-lg"><?php echo $error_message; ?></p>
+  </main>
+
+  <footer class="bg-gray-800 text-white text-center p-4 mt-8">
+    <p>Copyright &copy; 2024 kariter</p>
+  </footer>
+</body>
+</html>

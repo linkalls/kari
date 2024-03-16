@@ -74,19 +74,34 @@ if ($row) {
 <html>
 <head>
   <title>Error</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    #menu {
+      display: none;
+    }
+    #menu:checked ~ .menu {
+      display: block;
+    }
+  </style>
 </head>
 <body class="bg-gray-200 text-gray-800 antialiased font-sans min-h-screen flex flex-col">
   <nav class="bg-gray-800 text-white px-6 py-4">
-    <div class="flex justify-between">
-      <a href="/" class="text-white no-underline hover:text-gray-200">Home</a>
-      <a href="/about" class="text-white no-underline hover:text-gray-200 ml-6">About</a>
-      <a href="/contact" class="text-white no-underline hover:text-gray-200 ml-6">Contact</a>
+    <input type="checkbox" id="menu" class="hidden">
+    <label for="menu" class="cursor-pointer md:hidden block">
+      <svg class="fill-current text-white" width="20" height="20" viewBox="0 0 20 20">
+        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
+      </svg>
+    </label>
+    <div class="menu hidden md:block">
+      <a href="/" class="text-white no-underline hover:text-gray-200 mr-4">Home</a>
+      <a href="/about" class="text-white no-underline hover:text-gray-200 mr-4">About</a>
+      <a href="/contact" class="text-white no-underline hover:text-gray-200">Contact</a>
     </div>
   </nav>
 
-  <main class="container mx-auto max-w-xl p-6 flex-grow">
-    <h1 class="text-3xl font-bold text-red-500 mb-4">エラーが発生しました</h1>
+  <main class="mx-4 sm:container sm:mx-auto sm:max-w-xl sm:p-6 flex-grow">
+    <h1 class="mt-8 text-3xl font-bold text-red-500 mb-4">エラーが発生しました</h1>
     <p class="text-lg"><?php echo $error_message; ?></p>
   </main>
 

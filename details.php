@@ -27,7 +27,7 @@ if (!$url) {
  exit;
 }
 
-$sql = "SELECT a.accessed_at, a.client_ip, a.user_agent
+$sql = "SELECT a.accessed_at, a.client_ip, a.user_agent, a.referrer
  FROM url_accesses a
  WHERE a.short_url_id = (SELECT u.id FROM short_urls u WHERE u.short_url = ? AND u.user_id = ? AND u.user_id != 0)
  ORDER BY a.accessed_at DESC";
@@ -78,7 +78,7 @@ $stmt->close();
             <th class="px-4 py-2">アクセス日時 <button class="sort-button">▽</button></th>
             <th class="px-4 py-2">IPアドレス</th>
             <th class="px-4 py-2">ブラウザ情報</th>
-            
+            <th class="px-4 py-2">リファラー</th>
           </tr>
         </thead>
         <tbody>
@@ -87,6 +87,7 @@ $stmt->close();
               <td class="border px-4 py-2"><?php echo $access['accessed_at']; ?></td>
               <td class="border px-4 py-2"><?php echo $access['client_ip']; ?></td>
               <td class="border px-4 py-2"><?php echo $access['user_agent']; ?></td>
+              <td class="border px-4 py-2"><?php echo $access['referrer']; ?></td> 
             </tr>
           <?php endforeach; ?>
         </tbody>

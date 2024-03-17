@@ -42,7 +42,13 @@ if ($row) {
   $ignored_user_agents = [
     'facebookexternalhit/1.1;line-poker/1.0',
     'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)',
-    'Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)'
+    'Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)',
+    'Twitterbot/1.0',
+    'WhatsApp/2.19.221 A',
+    'help@dataminr.com',
+    'Applebot',
+    'trendictionbot0.5.0',
+    
   ];
   if ($user_id != 0 && !in_array($user_agent, $ignored_user_agents)) {
     // アクセスログを保存する

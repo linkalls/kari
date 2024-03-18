@@ -42,37 +42,121 @@ case 'signup':
     }
    }
     break;
-        case 'login':
-            $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-            $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
-            $sql = "SELECT * FROM users WHERE username = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $username);
-            $stmt->execute();
-            $result = $stmt->get_result();
+    case 'login':
+        $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
 
-            if ($result->num_rows > 0) {
-                $user = $result->fetch_assoc();
-                if (password_verify($password, $user['password'])) {
-                    // ログイン成功
-                    $_SESSION["user_id"] = $user['user_id'];
-                    echo json_encode(["success" => true, "message" => "ログイン成功"]);
-                } else {
-                    // パスワードが間違っている
-                    echo json_encode(["success" => false, "message" => "ユーザー名またはパスワードが間違っています"]);
-                }
+        $sql = "SELECT * FROM users WHERE username = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['password'])) {
+                // ログイン成功
+                $_SESSION["user_id"] = $user['user_id'];
+                echo json_encode([
+                    "success" => true,
+                    "message" => "ログイン成功",
+                    "user_id" => $user['user_id'] // ユーザーIDを含める
+                ]);
             } else {
-                // ユーザー名が存在しない
-                echo json_encode(["success" => false, "message" => "ユーザー名が存在しません"]);
+                // パスワードが間違っている
+                echo json_encode(["success" => false, "message" => "ユーザー名またはパスワードが間違っています"]);
             }
-            break;
+        } else {
+            // ユーザー名が存在しない
+            echo json_encode(["success" => false, "message" => "ユーザー名が存在しません"]);
+        }
+        break;
+
+                case 'create_short_url':
+                    $originalUrl = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL);
+                    $customPath = filter_input(INPUT_POST, 'customPath', FILTER_SANITIZE_STRING);
+
+                    if (!preg_match("~^(?:f|ht)tps?://~i", $originalUrl)) {
+                        $originalUrl = "http://" . $originalUrl;
+                    }
+
+                    $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : '0';
+                    $uniqueValue = microtime();
+
+                    if ($user_id != '0') {
+                        $shortUrl = substr(hash('sha256', $originalUrl . $user_id . $uniqueValue), 0, 8);
+                        $checkSql = "SELECT * FROM short_urls WHERE short_url = ? AND user_id = ?";
+                        $checkStmt = $conn->prepare($checkSql);
+                        $checkStmt->bind_param("ss", $shortUrl, $user_id);
+                    } else {
+                        $shortUrl = substr(hash('sha256', $originalUrl . $uniqueValue), 0, 8);
+                        $checkSql = "SELECT * FROM short_urls WHERE short_url = ?";
+                        $checkStmt = $conn->prepare($checkSql);
+                        $checkStmt->bind_param("s", $shortUrl);
+                    }
+
+                    if ($customPath) {
+                        if (preg_match('/\\\\u([a-fA-F0-9]{4})/', $customPath)) {
+                            echo json_encode(["success" => false, "message" => "ユニコードエスケープされた文字はカスタムパスで設定できません。"]);
+                            exit;
+                        }
+
+                        $checkCustomPathSql = "SELECT * FROM short_urls WHERE short_url = ?";
+                        $checkCustomPathStmt = $conn->prepare($checkCustomPathSql);
+                        $checkCustomPathStmt->bind_param("s", $customPath);
+                        $checkCustomPathStmt->execute();
+                        $checkCustomPathResult = $checkCustomPathStmt->get_result();
+
+                        if ($checkCustomPathResult->num_rows > 0) {
+                            echo json_encode(["success" => false, "message" => "そのカスタムパスは既に存在します。"]);
+                            exit;
+                        } else {
+                            $insertSql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
+                            $insertStmt = $conn->prepare($insertSql);
+                            $insertStmt->bind_param("sss", $customPath, $originalUrl, $user_id);
+                            if (!$insertStmt->execute()) {
+                                echo json_encode(["success" => false, "message" => "SQLエラー: " . $insertStmt->error]);
+                                exit;
+                            }
+                        }
+                    }
+
+                    $checkStmt->execute();
+                    $checkResult = $checkStmt->get_result();
+
+                    if ($checkResult->num_rows > 0) {
+                        echo json_encode(["success" => false, "message" => "その短縮URLは既に存在します。"]);
+                        exit;
+                    } else {
+                        $sql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("sss", $shortUrl, $originalUrl, $user_id);
+
+                        if ($stmt->execute()) {
+                            $shortUrlMessage = $_SERVER['HTTP_HOST'] . "/" . $shortUrl;
+                            echo json_encode(["success" => true, "message" => "短縮URLの生成が完了しました。", "shortUrl" => $shortUrlMessage]);
+                            exit;
+                        } else {
+                            echo json_encode(["success" => false, "message" => "エラー: " . $sql . "<br>" . $conn->error]);
+                            exit;
+                        }
+                    }
+                    break;
+
+                
+            }
+        } else {
+            echo json_encode(["success" => false, "message" => "POSTリクエストが必要です"]);
+        }
+        ?>
 
         case 'logout':
             session_start();
             session_destroy();
             echo json_encode(["success" => true, "message" => "ログアウト成功"]);
             break;
+
 
         case 'dashboard':
             session_start();

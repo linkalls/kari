@@ -5,85 +5,93 @@ session_start();
 
 // トークンの生成
 if (empty($_SESSION['csrf_token'])) {
-  $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $originalUrl = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL);
-  $customPath = filter_input(INPUT_POST, 'customPath', FILTER_SANITIZE_STRING);
+ $originalUrl = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_URL);
+ $customPath = filter_input(INPUT_POST, 'customPath', FILTER_SANITIZE_STRING);
 
-  if (!preg_match("~^(?:f|ht)tps?://~i", $originalUrl)) {
+ if (!preg_match("~^(?:f|ht)tps?://~i", $originalUrl)) {
     $originalUrl = "http://" . $originalUrl;
-  }
+ }
 
-  $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : '0';
-  $uniqueValue = microtime();
+ $user_id = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : '0';
+ $uniqueValue = microtime();
 
-  if ($user_id != '0') {
-    $shortUrl = substr(hash('sha256', $originalUrl . $user_id . $uniqueValue), 0, 8);
-    $checkSql = "SELECT * FROM short_urls WHERE short_url = ? AND user_id = ?";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("ss", $shortUrl, $user_id);
-  } else {
-    $shortUrl = substr(hash('sha256', $originalUrl . $uniqueValue), 0, 8);
-    $checkSql = "SELECT * FROM short_urls WHERE short_url = ?";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("s", $shortUrl);
-  }
-  if ($customPath) {
-      // カスタムパスがユニコードエスケープされた文字列である場合はエラーメッセージを出力して終了
-      if (preg_match('/\\\\u([a-fA-F0-9]{4})/', $customPath)) {
-        $_SESSION['error'] = "エラー: ユニコードエスケープされた文字はカスタムパスで設定できません。";
-        header("Location: index.php");
-        exit;
-      }
+if ($customPath) {
+    // カスタムパスがユニコードエスケープされた文字列である場合はエラーメッセージを出力して終了
+    if (preg_match('/\\\\u([a-fA-F0-9]{4})/', $customPath)) {
+      $_SESSION['error'] = "エラー: ユニコードエスケープされた文字はカスタムパスで設定できません。";
+      header("Location: index.php");
+      exit;
+    }
 
-      // データベースで重複をチェック
-      $checkCustomPathSql = "SELECT * FROM short_urls WHERE short_url = ?";
-      $checkCustomPathStmt = $conn->prepare($checkCustomPathSql);
-      $checkCustomPathStmt->bind_param("s", $customPath);
-      $checkCustomPathStmt->execute();
-      $checkCustomPathResult = $checkCustomPathStmt->get_result();
+    // データベースで重複をチェック
+    $checkCustomPathSql = "SELECT * FROM short_urls WHERE short_url = ?";
+    $checkCustomPathStmt = $conn->prepare($checkCustomPathSql);
+    $checkCustomPathStmt->bind_param("s", $customPath);
+    $checkCustomPathStmt->execute();
+    $checkCustomPathResult = $checkCustomPathStmt->get_result();
 
-      if ($checkCustomPathResult->num_rows > 0) {
-        $_SESSION['error'] = "エラー: そのカスタムパスは既に存在します。";
-        header("Location: index.php");
+    if ($checkCustomPathResult->num_rows > 0) {
+      $_SESSION['error'] = "エラー: そのカスタムパスは既に存在します。";
+      header("Location: index.php");
+      exit;
+    } else {
+      // カスタムパスをshort_urlとしてデータベースに保存
+      $insertSql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
+      $insertStmt = $conn->prepare($insertSql);
+      $insertStmt->bind_param("sss", $customPath, $originalUrl, $user_id);
+      if ($insertStmt->execute()) {
+        $shortUrlMessage = $_SERVER['HTTP_HOST'] . "/" . $customPath;
+        $_SESSION['flash_message'] = "短縮URLの生成が完了しました。";
+        $_SESSION['shortUrlMessage'] = $shortUrlMessage;
+        header("Location: index.php"); // リダイレクトを追加
         exit;
       } else {
-        // 元の文字列をshort_urlとしてデータベースに保存
-        $insertSql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
-        $insertStmt = $conn->prepare($insertSql);
-        $insertStmt->bind_param("sss", $customPath, $originalUrl, $user_id);
-        if (!$insertStmt->execute()) {
-          echo "SQLエラー: " . $insertStmt->error; // SQLエラーを出力
-        }
+        echo "SQLエラー: " . $insertStmt->error; // SQLエラーを出力
       }
     }
-  $checkStmt->execute();
-  $checkResult = $checkStmt->get_result();
+ } else {
+    if ($user_id != '0') {
+      $shortUrl = substr(hash('sha256', $originalUrl . $user_id . $uniqueValue), 0, 8);
+      $checkSql = "SELECT * FROM short_urls WHERE short_url = ? AND user_id = ?";
+      $checkStmt = $conn->prepare($checkSql);
+      $checkStmt->bind_param("ss", $shortUrl, $user_id);
+    } else {
+      $shortUrl = substr(hash('sha256', $originalUrl . $uniqueValue), 0, 8);
+      $checkSql = "SELECT * FROM short_urls WHERE short_url = ?";
+      $checkStmt = $conn->prepare($checkSql);
+      $checkStmt->bind_param("s", $shortUrl);
+    }
 
-  if ($checkResult->num_rows > 0) {
-    $_SESSION['error'] = "エラー: その短縮URLは既に存在します。";
-    header("Location: index.php");
-    exit;
-  } else {
-    $sql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $shortUrl, $originalUrl, $user_id);
-  
-    if ($stmt->execute()) {
-      $shortUrlMessage = $_SERVER['HTTP_HOST'] . "/" . $shortUrl;
-      $_SESSION['flash_message'] = "短縮URLの生成が完了しました。";
-      $_SESSION['shortUrlMessage'] = $shortUrlMessage;
-      header("Location: index.php"); // リダイレクトを追加
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+
+    if ($checkResult->num_rows > 0) {
+      $_SESSION['error'] = "エラー: その短縮URLは既に存在します。";
+      header("Location: index.php");
       exit;
-  } else {
-      $shortUrlMessage = "エラー: " . $sql . "<br>" . $conn->error;
-      $_SESSION['error'] = $shortUrlMessage;
-      header("Location: index.php"); // リダイレクトを追加
-      exit;
-  }
-  }
+    } else {
+      $sql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("sss", $shortUrl, $originalUrl, $user_id);
+    
+      if ($stmt->execute()) {
+        $shortUrlMessage = $_SERVER['HTTP_HOST'] . "/" . $shortUrl;
+        $_SESSION['flash_message'] = "短縮URLの生成が完了しました。";
+        $_SESSION['shortUrlMessage'] = $shortUrlMessage;
+        header("Location: index.php"); // リダイレクトを追加
+        exit;
+      } else {
+        $shortUrlMessage = "エラー: " . $sql . "<br>" . $conn->error;
+        $_SESSION['error'] = $shortUrlMessage;
+        header("Location: index.php"); // リダイレクトを追加
+        exit;
+      }
+    }
+ }
 }
 ?>
 

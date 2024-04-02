@@ -1,4 +1,9 @@
 <?php
+if (!file_exists('db.php')) {
+  header('Location: setup-kari.php');
+  exit;
+}
+
 include 'db.php';
 
 session_start();

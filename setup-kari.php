@@ -99,23 +99,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   ";
 
   file_put_contents('db.php', $configContent);
-
-  echo "設定が正常に完了しました。<br>";
-  echo "Kariの使い方:<br>";
-  echo "1. ユーザー名とパスワードを入力してログインします。<br>";
-  echo "2. 短縮したいURLを入力します。<br>";
-  echo "3. 短縮URLが生成されます。<br>";
-  echo "4. 短縮URLをクリックすると、元のURLにリダイレクトされます。<br>";
-  echo "<form action=\"setup-kari.php\" method=\"post\">";
-  echo "<input type=\"hidden\" name=\"delete\" value=\"true\">";
-  echo "<input type=\"submit\" value=\"完了\">";
-  echo "</form>";
-} elseif (isset($_POST['delete']) && $_POST['delete'] === 'true') {
   // 自身のファイルを削除する
   unlink(__FILE__);
-  echo "この設定ファイルは削除されました。<br>";
+  $_SESSION['flash_message'] = 'データベースの設定が成功しました。';
+   // 設定が完了したらindex.phpにリダイレクト
+   header('Location: index.php');
+   exit;
+   
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
@@ -125,18 +118,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body class="bg-gray-100">
  <div class="container mx-auto px-4 py-5">
-    <h1 class="text-4xl font-bold mb-4">設定 Kari</h1>
     <form action="setup-kari.php" method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="servername">サーバー名:</label>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="servername">サーバー名(localhostとかのdbのサーバー名):</label>
         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="servername" name="servername" type="text" required>
       </div>
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">ユーザー名:</label>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">ユーザー名(dbのユーザー名):</label>
         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" name="username" type="text" required>
       </div>
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">パスワード:</label>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">パスワード(db_userのパスワード):</label>
         <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" name="password" type="password" required>
       </div>
       <div class="mb-4">

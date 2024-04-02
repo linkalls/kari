@@ -28,14 +28,14 @@ if ($customPath) {
     // カスタムパスがユニコードエスケープされた文字列である場合はエラーメッセージを出力して終了
     if (preg_match('/\\\\u([a-fA-F0-9]{4})/', $customPath)) {
       $_SESSION['error'] = "エラー: ユニコードエスケープされた文字はカスタムパスで設定できません。";
-      header("Location: index.php");
+      header("Location: /");
       exit;
     }
 
     // カスタムパスが 'dashboard' または 'login' の場合はエラーメッセージを出力して終了
     if ($customPath == 'dashboard' || $customPath == 'login') {
       $_SESSION['error'] = "エラー: 'dashboard' または 'login' はカスタムパスとして使用できません。";
-      header("Location: index.php");
+      header("Location: /");
       exit;
   }
 
@@ -48,7 +48,7 @@ if ($customPath) {
 
     if ($checkCustomPathResult->num_rows > 0) {
       $_SESSION['error'] = "エラー: そのカスタムパスは既に存在します。";
-      header("Location: index.php");
+      header("Location: /");
       exit;
     } else {
       // カスタムパスをshort_urlとしてデータベースに保存
@@ -59,7 +59,7 @@ if ($customPath) {
         $shortUrlMessage = $_SERVER['HTTP_HOST'] . "/" . $customPath;
         $_SESSION['flash_message'] = "短縮URLの生成が完了しました。";
         $_SESSION['shortUrlMessage'] = $shortUrlMessage;
-        header("Location: index.php"); // リダイレクトを追加
+        header("Location: /"); // リダイレクトを追加
         exit;
       } else {
         echo "SQLエラー: " . $insertStmt->error; // SQLエラーを出力
@@ -83,7 +83,7 @@ if ($customPath) {
 
     if ($checkResult->num_rows > 0) {
       $_SESSION['error'] = "エラー: その短縮URLは既に存在します。";
-      header("Location: index.php");
+      header("Location: /");
       exit;
     } else {
       $sql = "INSERT INTO short_urls (short_url, original_url, user_id) VALUES (?, ?, ?)";
@@ -94,12 +94,12 @@ if ($customPath) {
         $shortUrlMessage = $_SERVER['HTTP_HOST'] . "/" . $shortUrl;
         $_SESSION['flash_message'] = "短縮URLの生成が完了しました。";
         $_SESSION['shortUrlMessage'] = $shortUrlMessage;
-        header("Location: index.php"); // リダイレクトを追加
+        header("Location: /"); // リダイレクトを追加
         exit;
       } else {
         $shortUrlMessage = "エラー: " . $sql . "<br>" . $conn->error;
         $_SESSION['error'] = $shortUrlMessage;
-        header("Location: index.php"); // リダイレクトを追加
+        header("Location: /"); // リダイレクトを追加
         exit;
       }
     }
@@ -227,7 +227,7 @@ if ($customPath) {
       navigator.clipboard.writeText(text).then(function() {
         document.getElementById('copyMessage').textContent = 'コピーされました';
         $_SESSION['flash_message'] = "コピーしました。";
-        header("Location: index.php");
+        header("Location: /");
         exit;
       }, function(err) {
         console.error('Could not copy text: ', err);

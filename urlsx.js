@@ -37,8 +37,8 @@ document.getElementById('login-form').addEventListener('submit', function(event)
   })
   .then(response => response.text())
   .then(data => {
-    if (data.includes('Location: index.php')) {
-      window.location.href = 'index.php';
+    if (data.includes('Location: /')) {
+      window.location.href = '/';
     } else {
       alert('ログインに失敗しました。');
     }

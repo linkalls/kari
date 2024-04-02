@@ -102,8 +102,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // 自身のファイルを削除する
   unlink(__FILE__);
   $_SESSION['flash_message'] = 'データベースの設定が成功しました。';
-   // 設定が完了したらindex.phpにリダイレクト
-   header('Location: index.php');
+   // 設定が完了したら/にリダイレクト
+   header('Location: /');
    exit;
    
 }

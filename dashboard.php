@@ -118,7 +118,7 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
               </div>
               <script>
               function redirectToIndex() {
-                window.location.href = 'index.php';
+                window.location.href = '/';
               }
               
               </script>
@@ -132,7 +132,7 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
 <?php endif; ?>
 <script>
     function redirectToIndex() {
-      window.location.href = 'index.php';
+      window.location.href = '/';
     }
 
     let chart;
@@ -200,9 +200,9 @@ $(document).on('click', '.delete-button', function() {
 });
 
 
-  // index.phpにリダイレクトする urlない時
+  // /にリダイレクトする urlない時
     function redirectToIndex() {
-    window.location.href = 'index.php';
+    window.location.href = '/';
 }
 </script>
 </body>

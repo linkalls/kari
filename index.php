@@ -27,6 +27,13 @@ if ($customPath) {
       exit;
     }
 
+    // カスタムパスが 'dashboard' または 'login' の場合はエラーメッセージを出力して終了
+    if ($customPath == 'dashboard' || $customPath == 'login') {
+      $_SESSION['error'] = "エラー: 'dashboard' または 'login' はカスタムパスとして使用できません。";
+      header("Location: index.php");
+      exit;
+  }
+
     // データベースで重複をチェック
     $checkCustomPathSql = "SELECT * FROM short_urls WHERE short_url = ?";
     $checkCustomPathStmt = $conn->prepare($checkCustomPathSql);
@@ -139,11 +146,11 @@ if ($customPath) {
       <h1 class="text-3xl mb-4 text-black p-2">URL短縮サービス</h1>
       <div>
         <?php if (isset($_SESSION["user_id"])): ?>
-          <a href="dashboard.php" class="inline-block p-2 rounded bg-blue-500 text-white mr-2 mb-2">ダッシュボード</a>
-          <a href="logout.php" class="inline-block p-2 rounded bg-blue-500 text-white mb-2">サインアウト</a>
+          <a href="/dashboard" class="inline-block p-2 rounded bg-blue-500 text-white mr-2 mb-2">ダッシュボード</a>
+          <a href="/logout" class="inline-block p-2 rounded bg-blue-500 text-white mb-2">サインアウト</a>
         <?php else: ?>
           <a href="signup.php" class="inline-block p-2 rounded bg-blue-500 text-white mr-2">登録</a>
-          <a href="login.php" class="inline-block p-2 rounded bg-blue-500 text-white">ログイン</a>
+          <a href="/login" class="inline-block p-2 rounded bg-blue-500 text-white">ログイン</a>
         <?php endif; ?>
       </div>
     </div>

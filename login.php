@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (password_verify($password, $user['password'])) {
       $_SESSION["user_id"] = $user['user_id']; // ユーザーIDをセッションに保存
       // ユーザーをダッシュボードにリダイレクト
-      header("Location: /dashboard.php");
+      header("Location: /dashboard");
       exit;
     } else {
       $error = "ユーザー名またはパスワードが無効です";

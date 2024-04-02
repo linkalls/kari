@@ -31,11 +31,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // 必要なテーブルを作成する
   $sql = "
   CREATE TABLE IF NOT EXISTS users (
-    user_id VARCHAR(255) NOT NULL,
-    username VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    whatuser_id INT NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id)
-  );
+);
 
   CREATE TABLE IF NOT EXISTS short_urls (
     id INT AUTO_INCREMENT NOT NULL,
@@ -60,6 +61,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if ($conn->multi_query($sql) !== TRUE) {
     die("テーブルの作成エラー: " . $conn->error . "<br>");
+  }
+
+  // 全てのクエリが実行されるまで待つ
+  while ($conn->more_results() && $conn->next_result()) {
+    // 結果セットをフリーにする
+    $result = $conn->use_result();
+    if ($result instanceof mysqli_result) {
+      $result->free();
+    }
+  }
+
+  // short_urlsテーブルにcreated_at列を追加する
+  $sql = "ALTER TABLE short_urls ADD created_at DATETIME DEFAULT CURRENT_TIMESTAMP";
+  if ($conn->query($sql) !== TRUE) {
+    die("テーブルの更新エラー: " . $conn->error . "<br>");
   }
 
   // データベース接続を閉じる

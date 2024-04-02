@@ -7,10 +7,11 @@
 ユーザー情報を保存するためのテーブルです。
 
 ```sql
-CREATE TABLE users (
-    user_id VARCHAR(255) NOT NULL,
-    username VARCHAR(255) NOT NULL,
+CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
+    whatuser_id INT NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id)
 );
 ```

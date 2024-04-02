@@ -4,6 +4,11 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # /dashboard と /login のための特定のリライトルールを追加
+    RewriteRule ^dashboard$ dashboard.php [L]
+    RewriteRule ^login$ login.php [L]
+    RewriteRule ^logout$ logout.php [L]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ redirect.php?url=$1 [L,QSA]

@@ -1,4 +1,10 @@
 <?php
+// データベース接続スクリプトが存在するか確認する
+if (!file_exists('db.php')) {
+  // データベース接続スクリプトが存在しない場合はsetup-kari.phpにリダイレクトする
+  header("Location: setup-kari.php");
+  exit;
+}
 // データベース接続スクリプトを読み込む
 require 'db.php';
 

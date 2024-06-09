@@ -39,6 +39,13 @@ if ($customPath) {
       exit;
   }
 
+  // カスタムパスに '?' が含まれている場合はエラーメッセージを出力して終了
+if (strpos($customPath, '?') !== false) {
+  $_SESSION['error'] = "エラー: '?' を含むカスタムパスは設定できません。";
+  header("Location: /");
+  exit;
+}
+
     // データベースで重複をチェック
     $checkCustomPathSql = "SELECT * FROM short_urls WHERE short_url = ?";
     $checkCustomPathStmt = $conn->prepare($checkCustomPathSql);

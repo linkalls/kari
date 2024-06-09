@@ -12,6 +12,9 @@ require 'db.php';
 // リクエストURIから短縮URLを取得する
 $path = $_SERVER['REQUEST_URI'];
 $short_url = ltrim(urldecode($path), '/');  // 先頭の'/'を削除
+// "?以降は削除する"
+$short_url = explode('?', $short_url)[0];
+
 
 // エラーメッセージを格納する変数
 $error_message = '';

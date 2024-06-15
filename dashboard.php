@@ -1,21 +1,37 @@
 <?php
 session_start();
 if (!isset($_SESSION["user_id"]) || $_SESSION["user_id"] == 0) {
- header("Location: login.php");
- exit;
+    header("Location: login.php");
+    exit;
 }
 
 include 'db.php';
 
 $userId = $_SESSION["user_id"];
 
+// ページネーション変数
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$itemsPerPage = 5;
+$offset = ($currentPage - 1) * $itemsPerPage;
+
+// 総アイテム数を取得
+$totalSql = "SELECT COUNT(*) as total FROM short_urls WHERE user_id = ? AND user_id != 0";
+$totalStmt = $conn->prepare($totalSql);
+$totalStmt->bind_param('i', $userId);
+$totalStmt->execute();
+$totalResult = $totalStmt->get_result()->fetch_assoc();
+$totalItems = $totalResult['total'];
+$totalPages = ceil($totalItems / $itemsPerPage);
+
 $sql = "SELECT u.original_url, u.short_url, u.created_at, COUNT(a.accessed_at) as access_count 
  FROM short_urls u 
  LEFT JOIN url_accesses a ON u.id = a.short_url_id
  WHERE u.user_id = ? AND u.user_id != 0
- GROUP BY u.original_url, u.short_url, u.created_at";
+ GROUP BY u.original_url, u.short_url, u.created_at
+ ORDER BY u.created_at DESC
+ LIMIT ? OFFSET ?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $_SESSION['user_id']);
+$stmt->bind_param('iii', $userId, $itemsPerPage, $offset);
 $stmt->execute();
 
 $result = $stmt->get_result();
@@ -26,17 +42,17 @@ $stmt->close();
 $sortOrder = $_GET['sortOrder'] ?? 'created_at';
 $sortDirection = $_GET['sortDirection'] ?? 'asc';
 usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
-  $result = 0;
-  if ($sortOrder === 'created_at') {
-    $result = strtotime($a['created_at']) - strtotime($b['created_at']);
-  } elseif ($sortOrder === 'access_count') {
-    $result = $a['access_count'] - $b['access_count'];
-  } elseif ($sortOrder === 'original_url') {
-    $result = strcmp($a['original_url'], $b['original_url']);
-  } elseif ($sortOrder === 'short_url') {
-    $result = strcmp($a['short_url'], $b['short_url']);
-  }
-  return $sortDirection === 'asc' ? $result : -$result;
+    $result = 0;
+    if ($sortOrder === 'created_at') {
+        $result = strtotime($a['created_at']) - strtotime($b['created_at']);
+    } elseif ($sortOrder === 'access_count') {
+        $result = $a['access_count'] - $b['access_count'];
+    } elseif ($sortOrder === 'original_url') {
+        $result = strcmp($a['original_url'], $b['original_url']);
+    } elseif ($sortOrder === 'short_url') {
+        $result = strcmp($a['short_url'], $b['short_url']);
+    }
+    return $sortDirection === 'asc' ? $result : -$result;
 });
 ?>
 
@@ -49,6 +65,7 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script src="https://cdn.skypack.dev/@hotwired/turbo" defer></script>
 </head>
 <body class="bg-gray-100 p-4 sm:p-10">
  <div class="container mx-auto flex flex-col items-center justify-center min-h-screen">
@@ -116,6 +133,36 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
               </div>
               </div>
               </div>
+
+            <!-- ページネーションリンクの改善版 -->
+            <div class="flex items-center justify-center space-x-2">
+              <!-- 前のページへのリンク -->
+              <?php if ($currentPage > 1): ?>
+                <a href="?page=<?php echo $currentPage - 1; ?>" class="px-3 py-1 text-gray-600 bg-white border rounded hover:bg-blue-500 hover:text-white">
+                  前
+                </a>
+              <?php endif; ?>
+
+              <?php
+              // 画面サイズに応じて表示するページ数を調整
+              $visiblePages = 5; // ここを動的に変更することも可能です
+              $startPage = max(1, $currentPage - intdiv($visiblePages, 2));
+              $endPage = min($totalPages, $startPage + $visiblePages - 1);
+              $startPage = max(1, min($startPage, $totalPages - $visiblePages + 1)); // 最後のページが表示範囲に収まるように調整
+
+              for ($i = $startPage; $i <= $endPage; $i++): ?>
+                <a href="?page=<?php echo $i; ?>" class="px-3 py-1 <?php echo $currentPage === $i ? 'bg-blue-500 text-white' : 'text-gray-600 bg-white border'; ?> rounded hover:bg-blue-500 hover:text-white">
+                  <?php echo $i; ?>
+                </a>
+              <?php endfor; ?>
+
+              <!-- 次のページへのリンク -->
+              <?php if ($currentPage < $totalPages): ?>
+                <a href="?page=<?php echo $currentPage + 1; ?>" class="px-3 py-1 text-gray-600 bg-white border rounded hover:bg-blue-500 hover:text-white">
+                  次
+                </a>
+              <?php endif; ?>
+            </div>
               <script>
               function redirectToIndex() {
                 window.location.href = '/';

@@ -65,7 +65,6 @@ usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
- <script src="https://cdn.skypack.dev/@hotwired/turbo" defer></script>
 </head>
 <body class="bg-gray-100 p-4 sm:p-10">
  <div class="container mx-auto flex flex-col items-center justify-center min-h-screen">

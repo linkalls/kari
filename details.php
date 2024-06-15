@@ -54,46 +54,61 @@ $stmt->close();
  <style>
   .text-container {
     overflow: auto;
-    word-wrap: break-word;
+    word-wrap: break-word;  
   }
+  
+
  </style>
 </head>
 <body class="bg-gray-100 p-4 sm:p-10">
     <h1 class="text-2xl sm:text-3xl font-bold mb-4 text-center mt-10">URL詳細</h1>
     <!-- アクセス解析のグラフを表示します。 -->
-<canvas id="accessChart" class="mb-4" style="max-width: 100%; max-height: 500px; width: 100%; height: auto;"></canvas>
+    <canvas id="accessChart" class="mb-4" style="max-width: 100%; max-height: 500px; width: 100%; height: auto;"></canvas>
     <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto text-container">
       <p><strong>元URL:</strong> <?php echo $url['original_url']; ?></p>
       <p><strong>短縮URL:</strong> <?php echo $url['short_url']; ?></p>
       <p><strong>作成日:</strong> <?php echo $url['created_at']; ?></p>
       <p><strong>アクセス数:</strong> <?php echo $url['access_count']; ?></p>
-    
     </div>
     <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mx-auto block" onclick="redirectToDashboard()">
       ダッシュボードに戻る
     </button>
     <!-- アクセス履歴表示 -->
-    <div class="w-full sm:w-96 bg-white rounded-lg shadow-lg p-6 mb-8 mx-auto text-container">
-      <table id="accessHistoryTable" class="w-full text-left table-auto">
-        <thead>
-          <tr>
-            <th class="px-4 py-2">アクセス日時 <button class="sort-button">▽</button></th>
-            <th class="px-4 py-2">IPアドレス</th>
-            <th class="px-4 py-2">ブラウザ情報</th>
-            <th class="px-4 py-2">リファラー</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($accesses as $access): ?>
-            <tr>
-              <td class="border px-4 py-2"><?php echo $access['accessed_at']; ?></td>
-              <td class="border px-4 py-2"><?php echo $access['client_ip']; ?></td>
-              <td class="border px-4 py-2"><?php echo $access['user_agent']; ?></td>
-              <td class="border px-4 py-2"><?php echo $access['referrer']; ?></td> 
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+    <div class="flex flex-col">
+      <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+          <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    アクセス日時 <button class="sort-button">▽</button>
+                  </th>
+                  <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    IPアドレス
+                  </th>
+                  <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    ブラウザ情報
+                  </th>
+                  <th scope="col" class="px-1 sm:px-2 py-3 text-left text-xs sm:text-sm font-medium text-gray-500 uppercase tracking-wider">
+                    リファラー
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($accesses as $access): ?>
+                  <tr>
+                    <td class="border px-1 sm:px-2 py-2 word-break break-all text-xs sm:text-sm"><?php echo $access['accessed_at']; ?></td>
+                    <td class="border px-1 sm:px-2 py-2 word-break break-all text-xs sm:text-sm"><?php echo $access['client_ip']; ?></td>
+                    <td class="border px-1 sm:px-2 py-2 word-break break-all text-xs sm:text-sm"><?php echo $access['user_agent']; ?></td>
+                    <td class="border px-1 sm:px-2 py-2 word-break break-all text-xs sm:text-sm"><?php echo $access['referrer']; ?></td> 
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
  </div>
 

@@ -40,7 +40,7 @@ $stmt->close();
 
 // データを並び替え
 $sortOrder = $_GET['sortOrder'] ?? 'created_at';
-$sortDirection = $_GET['sortDirection'] ?? 'asc';
+$sortDirection = $_GET['sortDirection'] ?? 'desc';
 usort($urls, function($a, $b) use ($sortOrder, $sortDirection) {
     $result = 0;
     if ($sortOrder === 'created_at') {
